@@ -16,19 +16,18 @@ $num = $result->rowCount();
 
 if ($num > 0) {
     $user_arr = array();
-    $user_arr['users'] = array();
     while($row = $result->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
         $user_item = array(
-            'userId' => $userId,
-            'firstName' => $first_name,
-            'lastName' => $last_name,
-            'email' => $email,
-            'password' => $password,
-            'isAdmin' => $isAdmin
+            'userId' => $UserId,
+            'firstName' => $FirstName,
+            'lastName' => $LastName,
+            'email' => $Email,
+            'password' => $Password,
+            'isAdmin' => $IsAdmin
         );
 
-        array_push($user_arr['users'], $user_item);
+        array_push($user_arr, $user_item);
     }
 
     echo json_encode($user_arr);
