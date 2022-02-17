@@ -41,4 +41,12 @@ class Post {
         $this->user_firstname = $row['FirstName'];
         $this->user_lastname = $row['LastName'];
     }
+
+    public function get_all() {
+        $stmt = $this->conn->prepare('CALL getAllPosts();');
+
+        $stmt->execute();
+
+        return $stmt;
+    }
 }
