@@ -53,4 +53,21 @@ class User {
 
         return false;
     }
+
+    public function update() {
+        $stmt = $this->conn->prepare("CALL updateUser('{$this->first_name}', '{$this->last_name}', '{$this->email}', '{$this->password}', '{$this->isAdmin}', '{$this->userId}');");
+        $this->first_name = htmlspecialchars(strip_tags($this->first_name));
+        $this->last_name = htmlspecialchars(strip_tags($this->last_name));
+        $this->email = htmlspecialchars(strip_tags($this->email));
+        $this->password = htmlspecialchars(strip_tags($this->password));
+        $this->isAdmin = htmlspecialchars(strip_tags($this->isAdmin));
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        printf('Error: %s \n', $stmt->error);
+
+        return false;
+    }
 }
