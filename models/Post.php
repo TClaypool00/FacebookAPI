@@ -7,6 +7,9 @@ class Post {
     public $date_posted;
     public $user_id;
 
+    public $user_firstname;
+    public $user_lastname;
+
     public function __construct($db)
     {
         $this->conn = $db;
@@ -25,5 +28,17 @@ class Post {
         printf('Error: %s \n', $stmt->error);
 
         return false;
+    }
+
+    public function get_single() {
+        $stmt = $this->conn->prepare("CALL getSinglePost('{$this->post_id}')");
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->body = $row['Body'];
+        $this->date_posted = $row['DatePosted'];
+        $this->user_id = $row['UserId'];
+        $this->user_firstname = $row['FirstName'];
+        $this->user_lastname = $row['LastName'];
     }
 }
