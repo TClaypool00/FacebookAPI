@@ -49,4 +49,19 @@ class Post {
 
         return $stmt;
     }
+
+    public function update() {
+        $stmt = $this->conn->prepare("CALL updatePost('{$this->post_id}', '{$this->body}', '{$this->user_id}')");
+
+        $this->body = htmlspecialchars(strip_tags($this->body));
+        $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        printf('Error: %s \n', $stmt->error);
+
+        return false;
+    }
 }
