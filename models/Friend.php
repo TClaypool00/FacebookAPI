@@ -1,6 +1,9 @@
 <?php
 class Friend {
     private $conn;
+    private $get_all_query = 'SELECT * FROM view_friends';
+    private $additional_query = '';
+    private $and_query = ' AND ';
 
     public $friend_id;
     public $sender_id;
@@ -20,16 +23,6 @@ class Friend {
     }
 
     public function create() {
-        if (!$this->number_is_numeric($this->sender_id)) {
-            echo 'Sender Id has to be a number';
-            die();
-        }
-
-        if (!$this->number_is_numeric($this->receiver_id)) {
-            echo 'Receiver Id Id has to be a number';
-            die();
-        }
-
         $stmt = $this->conn->prepare("CALL insertFriend('{$this->sender_id}', '{$this->receiver_id}');");
         $this->sender_id = htmlspecialchars(strip_tags($this->sender_id));
         $this->receiver_id = htmlspecialchars(strip_tags($this->receiver_id));
@@ -43,8 +36,43 @@ class Friend {
         return false;
     }
 
-    private function number_is_numeric($id) {
-        if (is_numeric($id)) {
+    public function get_all() {
+        if (get_isset('receiverId')) {
+            $this->additional_query += 'WHERE ReceiverId =' . $this->receiver_id;
+        }
+
+        if (get_isset(('senderId'))) {
+            if ($this->is_string_default()) {
+                $this->additional_query = $this->additional_query . $this->and_query;
+            }
+            $this->additional_query = $this->additional_query . ' WHERE SenderId =' . $this->sender_id;
+        }
+
+        if (get_isset('isAccpted')) {
+            if ($this->is_string_default()) {
+                $this->additional_query += $this->and_query;
+            }
+            $this->get_all_query = $this->get_all_query . ' WHERE IsAccpted =' . $this->is_accepted;
+            
+        }
+
+        if (get_isset('dateAccpted')) {
+            if ($this->is_string_default()) {
+                $this->additional_query += $this->and_query;
+            }
+            $this->get_all_query = $this->get_all_query . ' WHERE DateAccpted =' . $this->date_accepted;
+        }
+
+        $stmt = $this->conn->prepare($this->get_all_query . $this->additional_query);
+
+        $stmt->execute();
+
+        return $stmt;
+
+    }
+
+    private function is_string_default() {
+        if ($this->additional_query != '') {
             return true;
         }
 
