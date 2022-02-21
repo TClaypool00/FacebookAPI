@@ -68,7 +68,23 @@ class Friend {
         $stmt->execute();
 
         return $stmt;
+    }
 
+    public function get_single() {
+        $stmt = $this->conn->prepare($this->get_all_query . ' WHERE friendId = ' . $this->friend_id);
+
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->sender_id = $row['SenderId'];
+        $this->sender_frist_name = $row['SenderFirstName'];
+        $this->sender_last_name = $row['SenderLastName'];
+        $this->receiver_id = $row['ReceiverId'];
+        $this->receiver_first_name = $row['ReceiverFirstName'];
+        $this->receiver_last_name = $row['ReceiverLastName'];
+        $this->is_accepted = $row['IsAccepted'];
+        $this->date_accepted = $row['DateAccepted'];
     }
 
     private function is_string_default() {
