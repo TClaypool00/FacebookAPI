@@ -1,6 +1,5 @@
 <?php
-class Friend {
-    private $conn;
+class Friend extends BaseClass {
     private $get_all_query = 'SELECT * FROM view_friends';
     private $additional_query = '';
     private $and_query = ' AND ';
@@ -23,17 +22,11 @@ class Friend {
     }
 
     public function create() {
-        $stmt = $this->conn->prepare("CALL insertFriend('{$this->sender_id}', '{$this->receiver_id}');");
+        $this->stmt = $this->conn->prepare("CALL insertFriend('{$this->sender_id}', '{$this->receiver_id}');");
         $this->sender_id = htmlspecialchars(strip_tags($this->sender_id));
         $this->receiver_id = htmlspecialchars(strip_tags($this->receiver_id));
 
-        if ($stmt->execute()) {
-            return true;
-        }
-
-        printf('Error: %s \n', $stmt->error);
-
-        return false;
+        return $this->stmt_executed();
     }
 
     public function get_all() {
@@ -88,16 +81,17 @@ class Friend {
     }
 
     public function accept() {
-        $stmt = $this->conn->prepare("CALL acceptFriendRequest('{$this->friend_id}');");
+        $this->stmt = $this->conn->prepare("CALL acceptFriendRequest('{$this->friend_id}');");
         $this->friend_id = htmlspecialchars(strip_tags($this->friend_id));
 
-        if ($stmt->execute()) {
-            return true;
-        }
+        return $this->stmt_executed();
+    }
 
-        printf('Error: %s \n', $stmt->error);
+    public function delete() {
+        $this->stmt = $this->conn->prepare("CALL deleteFriendRequest('{$this->friend_id}');");
+        $this->friend_id = htmlspecialchars(strip_tags($this->friend_id));
 
-        return false;
+        return $this->stmt_executed();
     }
 
     private function is_string_default() {
