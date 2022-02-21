@@ -87,6 +87,19 @@ class Friend {
         $this->date_accepted = $row['DateAccepted'];
     }
 
+    public function accept() {
+        $stmt = $this->conn->prepare("CALL acceptFriendRequest('{$this->friend_id}');");
+        $this->friend_id = htmlspecialchars(strip_tags($this->friend_id));
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        printf('Error: %s \n', $stmt->error);
+
+        return false;
+    }
+
     private function is_string_default() {
         if ($this->additional_query != '') {
             return true;
