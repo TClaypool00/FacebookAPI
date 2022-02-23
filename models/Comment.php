@@ -1,9 +1,8 @@
 <?php
-class Comment extends BaseClass {
+class Comment extends BaseClass {    
     public $comment_id;
     public $comment_body;
     public $date_posted;
-    public $user_id;
     public $post_id;
 
     public function __construct($db)
@@ -16,6 +15,23 @@ class Comment extends BaseClass {
         $this->clean_data();
 
         return $this->stmt_executed();
+    }
+
+    public function get_all($user_Checked, $post_Checked) {
+        $this->select_query = 'SELECT * FROM view_comments';
+
+        if ($user_Checked) {
+            $this->select_query = $this->select_query . $this->and_where_query . ' UserId=' . $this->user_id;
+        }
+
+        if ($post_Checked) {
+            $this->select_query = $this->select_query . $this->and_where_query . 'PostId=' . $this->post_id;
+        }
+
+        $this->stat = $this->prepare_stmt($this->select_query);
+        $this->stat->execute();
+
+        return $this->stat;
     }
 
     private function clean_data() {

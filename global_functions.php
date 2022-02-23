@@ -31,6 +31,10 @@ function custom_array($message) {
     return json_encode(array('message' => $message));
 }
 
+function display_list($array) {
+    return json_encode($array);
+}
+
 function set_id() {
     if (get_isset('id')) {
         return set_get_variable('id');
