@@ -4,11 +4,15 @@ class BaseClass {
     protected $conn;
     protected $stmt;
     protected $select_query;
-    
+    protected $additional_query;
 
     public $user_id;
     public $user_first_name;
     public $user_last_name;
+
+    public function get_row_count() {
+        return $this->stat->rowcount();
+    }
 
     protected function stmt_executed() {
         if ($this->stmt->execute()) {
@@ -23,5 +27,4 @@ class BaseClass {
     protected function prepare_stmt($statement) {
         return $this->conn->prepare($statement);
     }
-
 }

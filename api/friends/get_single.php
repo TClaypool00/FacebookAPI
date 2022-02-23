@@ -5,6 +5,9 @@ include '../../global_functions.php';
 
 if (get_isset('id')) {
     $friend->friend_id = set_get_variable('id');
+} else if (get_isset('senderId') && (get_isset('receiverId'))) {
+    $friend->sender_id = set_get_variable('senderId');
+    $friend->receiver_id = set_get_variable('receiverId');
 } else {
     echo custom_array('id cannot be empty');
     die();

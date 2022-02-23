@@ -1,9 +1,5 @@
 <?php
 class Friend extends BaseClass {
-    private $get_all_query = 'SELECT * FROM view_friends';
-    private $additional_query = '';
-    private $and_query = ' AND ';
-
     public $friend_id;
     public $sender_id;
     public $receiver_id;
@@ -19,6 +15,7 @@ class Friend extends BaseClass {
     public function __construct($db)
     {
         $this->conn = $db;
+        $this->select_query = 'SELECT * FROM view_friends ';
     }
 
     public function create() {
@@ -30,45 +27,30 @@ class Friend extends BaseClass {
     }
 
     public function get_all() {
-        if (get_isset('receiverId')) {
-            $this->additional_query += 'WHERE ReceiverId =' . $this->receiver_id;
-        }
+        $this->stat = $this->prepare_stmt($this->select_query);
 
-        if (get_isset(('senderId'))) {
-            if ($this->is_string_default()) {
-                $this->additional_query = $this->additional_query . $this->and_query;
-            }
-            $this->additional_query = $this->additional_query . ' WHERE SenderId =' . $this->sender_id;
-        }
+        $this->stmt->execute();
 
-        if (get_isset('isAccpted')) {
-            if ($this->is_string_default()) {
-                $this->additional_query += $this->and_query;
-            }
-            $this->get_all_query = $this->get_all_query . ' WHERE IsAccpted =' . $this->is_accepted;
-            
-        }
-
-        if (get_isset('dateAccpted')) {
-            if ($this->is_string_default()) {
-                $this->additional_query += $this->and_query;
-            }
-            $this->get_all_query = $this->get_all_query . ' WHERE DateAccpted =' . $this->date_accepted;
-        }
-
-        $stmt = $this->conn->prepare($this->get_all_query . $this->additional_query);
-
-        $stmt->execute();
-
-        return $stmt;
+        return $this->stmt;
     }
 
     public function get_single() {
-        $stmt = $this->conn->prepare($this->get_all_query . ' WHERE friendId = ' . $this->friend_id);
+        if ($this->friend_id_null()) {
+            $this->additional_query = 'WHERE SenderId=' . $this->sender_id . ' AND ReceiverId=' . $this->receiver_id;
+        } else {
+            $this->additional_query = 'WHERE FriendId=' . $this->friend_id;
+        }
 
-        $stmt->execute();
+        $this->stat = $this->prepare_stmt($this->select_query . $this->additional_query);
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->stmt->execute();
+
+        if ($this->friend_id_null() && ($this->get_row_count() == 0)) {
+            $this->additional_query = 'WHERE ReceiverId=' . $this->sender_id . ' AND SenderId=' . $this->receiver_id;
+            $this->stat->execute();
+        }
+
+        $row = $this->stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->sender_id = $row['SenderId'];
         $this->sender_frist_name = $row['SenderFirstName'];
@@ -94,11 +76,11 @@ class Friend extends BaseClass {
         return $this->stmt_executed();
     }
 
-    private function is_string_default() {
-        if ($this->additional_query != '') {
+    private function friend_id_null() {
+        if ($this->friend_id == null) {
             return true;
         }
-
+        
         return false;
     }
 }
