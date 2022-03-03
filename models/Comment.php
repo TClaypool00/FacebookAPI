@@ -47,6 +47,13 @@ class Comment extends BaseClass {
         $this->user_last_name = $this->row_value('LastName');
     }
 
+    public function update() {
+        $this->stmt = $this->prepare_stmt("CALL updateComment('{$this->comment_id}', '{$this->comment_body}');");
+        $this->stmt->execute();
+
+        return $this->stmt_executed();
+    }
+
     private function clean_data() {
         $this->comment_body = htmlspecialchars(strip_tags($this->comment_body));
         $this->user_id = htmlspecialchars(strip_tags($this->user_id));
