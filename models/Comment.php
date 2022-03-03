@@ -8,6 +8,7 @@ class Comment extends BaseClass {
     public function __construct($db)
     {
         $this->conn = $db;
+        $this->select_query = 'SELECT * FROM view_comments';
     }
 
     public function create() {
@@ -18,8 +19,6 @@ class Comment extends BaseClass {
     }
 
     public function get_all($user_Checked, $post_Checked) {
-        $this->select_query = 'SELECT * FROM view_comments';
-
         if ($user_Checked) {
             $this->select_query = $this->select_query . $this->and_where_query . ' UserId=' . $this->user_id;
         }
@@ -32,6 +31,20 @@ class Comment extends BaseClass {
         $this->stat->execute();
 
         return $this->stat;
+    }
+
+    public function get_single() {
+        $this->stmt = $this->prepare_stmt($this->select_query . ' WHERE CommentId=' . $this->comment_id);
+
+        $this->stmt->execute();
+
+        $this->row = $this->stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->comment_body = $this->row_value('CommentBody');
+        $this->date_posted = $this->row_value('DatePosted');
+        $this->post_id = $this->row_value('PostId');
+        $this->user_first_name = $this->row_value('FirstName');
+        $this->user_last_name = $this->row_value('LastName');
     }
 
     private function clean_data() {

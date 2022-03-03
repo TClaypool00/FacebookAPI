@@ -5,6 +5,8 @@ class BaseClass {
     protected $stmt;
     protected $select_query;
     protected $additional_query;
+    protected $limit = ' LIMIT 0, 1';
+    protected $row;
 
     public $user_id;
     public $user_first_name;
@@ -26,5 +28,9 @@ class BaseClass {
 
     protected function prepare_stmt($statement) {
         return $this->conn->prepare($statement);
+    }
+
+    protected function row_value($value) {
+        return $this->row[$value];
     }
 }
