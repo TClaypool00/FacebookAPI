@@ -1,7 +1,6 @@
 <?php
 include '../../partial_files/update_headers.php';
 include '../../partial_files/object_partial_files/new_post.php';
-$data = json_decode(file_get_contents('php://input'));
 
 $post->post_id = isset($_GET['id']) ? $_GET['id'] : die();
 $post->body = $data->body;

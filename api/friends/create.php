@@ -2,8 +2,6 @@
 include '../../partial_files/create_headers.php';
 include '../../partial_files/object_partial_files/new_friend.php';
 
-$data = json_decode(file_get_contents("php://input"));
-
 $friend->sender_id = $data->senderId;
 $friend->receiver_id = $data->receiverId;
 

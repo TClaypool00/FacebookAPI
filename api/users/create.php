@@ -13,8 +13,6 @@ $db = $database->connect();
 
 $user = new User($db);
 
-$data = json_decode(file_get_contents('php://input'));
-
 $user->first_name = $data->first_name;
 $user->last_name = $data->last_name;
 $user->email = $data->email;

@@ -3,8 +3,6 @@ include_once '../../partial_files/create_headers.php';
 include '../../partial_files/object_partial_files/new_comment.php';
 include '../../global_functions.php';
 
-$data = json_decode(file_get_contents("php://input"));
-
 $comment->comment_body = $data->commentBody;
 $comment->user_id = $data->userId;
 $comment->post_id = $data->postId;
