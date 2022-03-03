@@ -1,30 +1,30 @@
 <?php
-//Headers
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Access-Control-Allow-Header, Content-Type, Access-Control-Allow-Methods, Authorization, X-Requested-With');
+include '../../partial_files/create_headers.php';
+include '../../partial_files/object_partial_files/new_user.php';
+include '../../global_functions.php';
 
-include_once '../../config/Database.php';
-include_once '../../models/User.php';
-
-$database = new Database();
-$db = $database->connect();
-
-$user = new User($db);
-
-$user->first_name = $data->first_name;
-$user->last_name = $data->last_name;
+$user->first_name = $data->firstName;
+$user->last_name = $data->lastName;
 $user->email = $data->email;
 $user->password = $data->password;
-$user->isAdmin = $data->isAdmin;
+$user->confirm_password = $data->confirmPassword;
+
+if (!$user->password_confirm()) {
+    http_response_code(400);
+    echo custom_array('passwords do not match');
+    die();
+}
+
+if (!$user->password_meets()) {
+    http_response_code(400);
+    echo custom_array('Password does not meet the minimum requirements');
+    die();
+}
 
 if ($user->create()) {
-    echo json_encode(
-        array('message' => 'User added')
-    );
+    http_response_code(201);
+    echo custom_array('user has been created');
 } else {
-    echo json_encode(
-        array('message' => 'User not added')
-    );
+    http_response_code(400);
+    echo custom_array('user could be created');
 }
