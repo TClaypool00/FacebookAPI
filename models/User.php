@@ -59,7 +59,7 @@ class User {
 
     public function update() {
         $this->clean_data();
-        $stmt = $this->conn->prepare("CALL updateUser('{$this->first_name}', '{$this->last_name}', '{$this->email}', '{$this->password}', '{$this->isAdmin}', '{$this->userId}');");
+        $stmt = $this->conn->prepare("CALL updateUser('{$this->first_name}', '{$this->last_name}', '{$this->email}', '{$this->isAdmin}', '{$this->userId}');");
 
         if ($stmt->execute()) {
             return true;
