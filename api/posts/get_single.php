@@ -1,8 +1,9 @@
 <?php
 include '../../partial_files/get_single_headers.php';
 include '../../partial_files/object_partial_files/new_post.php';
+include '../../global_functions.php';
 
-$post->post_id = isset($_GET['id']) ? $_GET['id'] : die();
+$post->post_id = set_id();
 
 $post->get_single();
 

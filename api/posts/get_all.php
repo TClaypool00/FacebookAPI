@@ -1,6 +1,7 @@
 <?php
 include '../../partial_files/get_all_headeres.php';
 include '../../partial_files/object_partial_files/new_post.php';
+include '../../global_functions.php';
 
 $all_posts = $post->get_all();
 $num = $all_posts->rowCount();
@@ -27,5 +28,5 @@ if ($num > 0) {
     echo json_encode($post_array);
 } else {
     http_response_code(404);
-    echo json_encode(array('message' => 'No posts found'));
+    echo custom_array('No posts found');
 }
