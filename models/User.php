@@ -1,14 +1,10 @@
 <?php
-class User {
-    private $conn;
+class User extends BaseClass {
     private $options = [
         'cost' => 11
     ];
 
     //Properties
-    public $userId;
-    public $first_name;
-    public $last_name;
     public $email;
     public $password;
     public $confirm_password;
@@ -21,24 +17,26 @@ class User {
 
     //Get Users
     public function getAll() {
-        $stmt = $this->conn->prepare('CALL getUsers();');
+        $this->stmt = $this->prepare_stmt('CALL getUsers();');
 
-        $stmt->execute();
+        $this->stmt->execute();
 
-        return $stmt;
+        return $this->stmt;
     }
     
-    public function get_single() {
-        $stmt = $this->conn->prepare("CALL getSingleUser('{$this->userId}')");
+    public function get_single($show_password) {
+        $this->stmt = $this->prepare_stmt("CALL getSingleUser('{$this->user_id}');");
+        $this->stmt->execute();
+        $this->row = $this->stmt->fetch(PDO::FETCH_ASSOC);
 
-        $stmt->execute();
+        $this->user_first_name = $this->row_value('FirstName');
+        $this->user_last_name = $this->row_value('LastName');
+        $this->email = $this->row_value('Email');
+        $this->isAdmin = $this->row_value('IsAdmin');
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $this->first_name = $row['FirstName'];
-        $this->last_name = $row['LastName'];
-        $this->email = $row['Email'];
-        $this->isAdmin = $row['IsAdmin'];
+        if ($show_password) {
+            $this->password = $this->row_value('Password');
+        }
     }
 
     public function create() {
@@ -46,28 +44,16 @@ class User {
 
         $this->password = $this->encrypt_password();
 
-        $stmt = $this->conn->prepare("CALL insertUser('{$this->first_name}', '{$this->last_name}', '{$this->email}', '{$this->password}');");
+        $this->stmt = $this->prepare_stmt("CALL insertUser('{$this->user_first_name}', '{$this->user_last_name}', '{$this->email}', '{$this->password}');");
 
-        if ($stmt->execute()) {
-            return true;
-        }
-
-        printf('Error: %s \n', $stmt->error);
-
-        return false;
+        return $this->stmt_executed();
     }
 
     public function update() {
         $this->clean_data();
-        $stmt = $this->conn->prepare("CALL updateUser('{$this->first_name}', '{$this->last_name}', '{$this->email}', '{$this->isAdmin}', '{$this->userId}');");
+        $this->stmt = $this->prepare_stmt("CALL updateUser('{$this->user_first_name}', '{$this->user_last_name}', '{$this->email}', '{$this->isAdmin}', '{$this->userId}');");
 
-        if ($stmt->execute()) {
-            return true;
-        }
-
-        printf('Error: %s \n', $stmt->error);
-
-        return false;
+        return $this->stmt_executed();
     }
 
     public function password_confirm() {

@@ -3,8 +3,8 @@ include '../../partial_files/create_headers.php';
 include '../../partial_files/object_partial_files/new_user.php';
 include '../../global_functions.php';
 
-$user->first_name = $data->firstName;
-$user->last_name = $data->lastName;
+$user->user_first_name = $data->firstName;
+$user->user_last_name = $data->lastName;
 $user->email = $data->email;
 $user->password = $data->password;
 $user->confirm_password = $data->confirmPassword;

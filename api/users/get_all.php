@@ -1,15 +1,7 @@
 <?php
-//Headers
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-
-include_once '../../config/Database.php';
-include_once '../../models/User.php';
-
-$database = new Database();
-$db = $database->connect();
-
-$user = new User($db);
+include '../../partial_files/get_all_headeres.php';
+include '../../partial_files/object_partial_files/new_user.php';
+include '../../global_functions.php';
 
 $result = $user->getAll();
 $num = $result->rowCount();
@@ -32,7 +24,5 @@ if ($num > 0) {
 
     echo json_encode($user_arr);
 } else {
-    echo json_encode(
-        array('message' => 'No users found')
-    );
+    echo custom_array('No users found');
 }
