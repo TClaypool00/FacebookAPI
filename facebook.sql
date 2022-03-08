@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2022 at 03:36 AM
+-- Generation Time: Mar 08, 2022 at 06:02 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -31,6 +31,9 @@ WHERE f.FriendId = friend_id$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteFriendRequest` (IN `friend_id` INT(11))  DELETE FROM friends WHERE FriendId = friend_id$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteReply` (IN `reply_id` INT(11))  DELETE FROM replies
+WHERE ReplyId = reply_id$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllPosts` ()  BEGIN
 	SELECT * FROM view_posts;
 END$$
@@ -57,8 +60,11 @@ VALUES (sender_id, receiver_id)$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertPost` (IN `post_body` VARCHAR(255), IN `user_id` INT(11))  INSERT INTO posts (Body, UserId)
 VALUES (post_body, user_id)$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `insertUser` (IN `first_name` VARCHAR(150), IN `last_name` VARCHAR(200), IN `email` VARCHAR(255), IN `password` VARCHAR(255), IN `is_admin` BIT(1))  INSERT INTO users (FirstName, LastName, Email, Password, IsAdmin)
-VALUES (first_name, last_name, email, password, is_admin)$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertUser` (IN `first_name` VARCHAR(150), IN `last_name` VARCHAR(200), IN `email` VARCHAR(255), IN `password` VARCHAR(255))  INSERT INTO users (FirstName, LastName, Email, Password)
+VALUES (first_name, last_name, email, password)$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insReply` (IN `reply_body` VARCHAR(255), IN `user_id` INT(11), IN `comment_id` INT(11))  INSERT INTO replies (ReplyBody, UserId, CommentId)
+VALUES (reply_body, user_id, comment_id)$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `updateComment` (IN `comment_id` INT(11), IN `comment_body` VARCHAR(255))  UPDATE comments
 SET CommentBody = comment_body
@@ -68,9 +74,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `updatePost` (IN `post_id` INT(11), 
 SET Body = body, UserId = user_id
 WHERE PostId = post_id$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUser` (IN `first_name` VARCHAR(150), IN `last_name` VARCHAR(200), IN `email` VARCHAR(255), IN `password_input` VARCHAR(255), IN `is_admin` BIT(1), IN `user_id` INT(11))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateReply` (IN `reply_body` VARCHAR(255), IN `reply_id` INT(11))  UPDATE replies
+SET ReplyBody = reply_body
+WHERE ReplyId = reply_id$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUser` (IN `first_name` VARCHAR(150), IN `last_name` VARCHAR(200), IN `email` VARCHAR(255), IN `is_admin` BIT(1), IN `user_id` INT(11))  BEGIN
     UPDATE users
-    SET FirstName = first_name, LastName = last_name, Email = email, Password = password_input, IsAdmin = is_admin
+    SET FirstName = first_name, LastName = last_name, Email = email, IsAdmin = is_admin
     WHERE UserId = user_id;
 END$$
 
@@ -89,8 +99,6 @@ CREATE TABLE `comments` (
   `PostId` int(11) NOT NULL,
   `UserId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `friends`
@@ -117,8 +125,6 @@ CREATE TABLE `posts` (
   `UserId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- --------------------------------------------------------
-
 --
 -- Table structure for table `users`
 --
@@ -131,11 +137,6 @@ CREATE TABLE `users` (
   `Password` varchar(255) NOT NULL,
   `IsAdmin` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `users`
---
-
 -- --------------------------------------------------------
 
 --
@@ -271,7 +272,7 @@ ALTER TABLE `posts`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
