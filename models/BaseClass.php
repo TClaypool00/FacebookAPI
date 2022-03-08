@@ -1,10 +1,10 @@
 <?php
 class BaseClass {
-    protected $and_where_query = ' AND WHERE ';
+    protected $and_where_query = ' AND ';
     protected $conn;
     protected $stmt;
     protected $select_query;
-    protected $additional_query;
+    protected $additional_query = '';
     protected $limit = ' LIMIT 0, 1';
     protected $row;
 
@@ -31,6 +31,14 @@ class BaseClass {
     }
 
     protected function row_value($value) {
-        return $this->row[$value];
+        return $this->row[$value] ?? null;
+    }
+
+    protected function is_additional_query () {
+        if ($this->additional_query === null || $this->additional_query === '') {
+            return true;
+        }
+
+        return false;
     }
 }
